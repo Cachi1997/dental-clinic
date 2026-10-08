@@ -13,6 +13,11 @@
     "lint": "npm run lint --workspaces --if-present",
     "preview": "npm run preview --workspace client",
     "dev:server": "npm run dev --workspace server",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9"
   }
 }

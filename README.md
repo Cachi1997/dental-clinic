@@ -7,12 +7,12 @@ clinical notes, treatment plans and payments.
 
 ## Tech stack
 
-| Layer   | Tools                                         |
-| ------- | --------------------------------------------- |
-| Client  | React 19, Vite, TypeScript                    |
-| Server  | Express, Prisma, PostgreSQL _(planned)_       |
-| Shared  | Zod schemas used by client and server         |
-| Tooling | npm workspaces, ESLint                        |
+| Layer   | Tools                                   |
+| ------- | --------------------------------------- |
+| Client  | React 19, Vite, TypeScript              |
+| Server  | Express, Prisma, PostgreSQL _(planned)_ |
+| Shared  | Zod schemas used by client and server   |
+| Tooling | npm workspaces, ESLint                  |
 
 ## Project structure
 
@@ -47,10 +47,10 @@ The client runs on http://localhost:5173.
 
 ## Scripts
 
-| Command           | Description                    |
-| ----------------- | ------------------------------ |
-| `npm run dev`     | Start the client               |
-| `npm run build`   | Build the client               |
-| `npm run preview` | Preview the client build       |
-| `npm run lint`    | Lint every workspace           |
-| `npm test`        | Run the test suites            |
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start the client         |
+| `npm run build`   | Build the client         |
+| `npm run preview` | Preview the client build |
+| `npm run lint`    | Lint every workspace     |
+| `npm test`        | Run the test suites      |
