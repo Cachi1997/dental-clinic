@@ -3,23 +3,23 @@
 Management system for a dental clinic: patients, appointments across multiple chairs,
 clinical notes, treatment plans and payments.
 
-> **Status:** in development. Only the monorepo skeleton and the database setup exist so far.
+> **Status:** in development. The server has a health check and the first database models.
 
 ## Tech stack
 
-| Layer    | Tools                                 |
-| -------- | ------------------------------------- |
-| Client   | React 19, Vite, TypeScript            |
-| Server   | Prisma, Express _(planned)_           |
-| Database | PostgreSQL 18                         |
-| Shared   | Zod schemas used by client and server |
-| Tooling  | npm workspaces, ESLint, Prettier      |
+| Layer    | Tools                                               |
+| -------- | --------------------------------------------------- |
+| Client   | React 19, Vite, TypeScript                          |
+| Server   | Express 5, Prisma 7                                 |
+| Database | PostgreSQL 18                                       |
+| Shared   | Zod schemas used by client and server               |
+| Tooling  | npm workspaces, ESLint, Prettier, Vitest, Supertest |
 
 ## Project structure
 
 ```
 ├── client/   React app (Vite)
-├── server/   API (not implemented yet)
+├── server/   Express API + Prisma
 └── shared/   Zod schemas and the types derived from them
 ```
 
@@ -89,8 +89,41 @@ clinical notes, treatment plans and payments.
 
 Database scripts live in the `server` workspace:
 
-| Command                                  | Description                       |
-| ---------------------------------------- | --------------------------------- |
-| `npm run db:migrate --workspace server`  | Apply pending database migrations |
-| `npm run db:generate --workspace server` | Generate the Prisma client        |
-| `npm run db:studio --workspace server`   | Open Prisma Studio                |
+| Command                                      | Description                               |
+| -------------------------------------------- | ----------------------------------------- |
+| `npm run db:migrate --workspace server`      | Apply pending database migrations         |
+| `npm run db:generate --workspace server`     | Generate the Prisma client                |
+| `npm run db:studio --workspace server`       | Open Prisma Studio                        |
+| `npm run db:migrate:test --workspace server` | Apply the migrations to the test database |
+
+## Testing
+
+The server tests call the real API against a separate PostgreSQL database, so your
+development data is never touched.
+
+1. Create the test database. Connect as the `postgres` superuser and run:
+
+   ```sql
+   CREATE DATABASE dental_clinic_test OWNER dental_clinic;
+   ```
+
+2. Create `server/.env.test` with a `DATABASE_URL` that points to `dental_clinic_test`:
+
+   ```
+   DATABASE_URL="postgresql://dental_clinic:change-me@localhost:5432/dental_clinic_test?schema=public"
+   ```
+
+   The database name **must end in `_test`**. Every test empties the database before it
+   runs, so the test setup refuses to start against any other database.
+
+3. Apply the migrations to the test database:
+
+   ```bash
+   npm run db:migrate:test --workspace server
+   ```
+
+4. Run the tests from the repository root:
+
+   ```bash
+   npm test
+   ```
