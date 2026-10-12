@@ -10,7 +10,7 @@ clinical notes, treatment plans and payments.
 | Layer    | Tools                                 |
 | -------- | ------------------------------------- |
 | Client   | React 19, Vite, TypeScript            |
-| Server   | Express, Prisma _(planned)_           |
+| Server   | Prisma, Express _(planned)_           |
 | Database | PostgreSQL 18                         |
 | Shared   | Zod schemas used by client and server |
 | Tooling  | npm workspaces, ESLint, Prettier      |
@@ -58,7 +58,16 @@ clinical notes, treatment plans and payments.
    cp server/.env.example server/.env
    ```
 
-4. Start the client:
+4. Apply the database migrations and generate the Prisma client:
+
+   ```bash
+   npm run db:migrate --workspace server
+   npm run db:generate --workspace server
+   ```
+
+   Run `db:generate` again every time the Prisma schema changes.
+
+5. Start the client:
 
    ```bash
    npm run dev
@@ -77,3 +86,11 @@ clinical notes, treatment plans and payments.
 | `npm run format`       | Format every file with Prettier         |
 | `npm run format:check` | Check formatting without changing files |
 | `npm test`             | Run the test suites                     |
+
+Database scripts live in the `server` workspace:
+
+| Command                                  | Description                       |
+| ---------------------------------------- | --------------------------------- |
+| `npm run db:migrate --workspace server`  | Apply pending database migrations |
+| `npm run db:generate --workspace server` | Generate the Prisma client        |
+| `npm run db:studio --workspace server`   | Open Prisma Studio                |

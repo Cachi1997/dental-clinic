@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DocumentType {
+  DNI
+  PASSPORT
+  LIBRETA
+
+  @@map("document_type")
+}
+
+model Patient {
+  id              Int          @id @default(autoincrement())
+  firstName       String       @map("first_name")
+  lastName        String       @map("last_name")
+  documentType    DocumentType @map("document_type")
+  documentNumber  String       @map("document_number")
+  birthDate       DateTime?    @map("birth_date") @db.Date
+  phone           String
+  email           String?
+  address         String?
+  insurancePlanId Int?         @map("insurance_plan_id")
+  memberNumber    String?      @map("member_number")
+  guardian        String?
+  alert           String?
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  insurancePlan InsurancePlan? @relation(fields: [insurancePlanId], references: [id], onDelete: Restrict)
+
+  @@unique([documentType, documentNumber])
+  @@index([documentNumber])
+  @@map("patients")
+}
+
+model InsurancePlan {
+  id          Int      @id @default(autoincrement())
+  insurerId   Int      @map("insurer_id")
+  code        String
+  isActive    Boolean  @default(true) @map("is_active")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  insurer  Insurer   @relation(fields: [insurerId], references: [id], onDelete: Restrict)
+  patients Patient[]
+
+  @@unique([insurerId, code])
+  @@map("insurance_plans")
+}
+
+model Insurer {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  hasAgreement   Boolean   @default(false) @map("has_agreement")
+  agreementSince DateTime? @map("agreement_since") @db.Date
+  phone          String?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  insurancePlans InsurancePlan[]
+
+  @@map("insurers")
+}
