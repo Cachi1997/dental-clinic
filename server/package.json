@@ -8,16 +8,25 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7.10.0"
+    "@prisma/client": "^7.10.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.20.5",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
     "prisma": "^7.10.0",
     "tsx": "^4.23.15",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.71.1"
   }
 }
