@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    # A throwaway database that only exists while the job runs. Its credentials
+    # are not secret, and they are unrelated to any real database.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: dental_clinic
+          POSTGRES_PASSWORD: dental_clinic
+          POSTGRES_DB: dental_clinic_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dental_clinic -d dental_clinic_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # The test setup refuses to run unless the database name ends in _test.
+    env:
+      DATABASE_URL: postgresql://dental_clinic:dental_clinic@localhost:5432/dental_clinic_test?schema=public
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      # The type-aware ESLint rules need the generated Prisma types.
+      - name: Generate the Prisma client
+        run: npm run db:generate --workspace server
+
+      - run: npm run lint
+
+      - name: Typecheck every workspace
+        run: npm run typecheck --workspaces --if-present
+
+      - name: Build the client
+        run: npm run build
+
+      - name: Migrate the test database
+        run: npm run db:migrate:test --workspace server
+
+      - run: npm test
