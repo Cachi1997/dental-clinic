@@ -5,6 +5,7 @@ import type {
   Prisma,
 } from '../../generated/prisma/client'
 import { isUniqueViolation } from '../../lib/prisma-errors'
+import { normalizeForSearch } from '../../lib/search'
 
 type PlanProblem = 'plan_not_found' | 'plan_inactive'
 
@@ -34,13 +35,17 @@ const toPatient = (row: PatientRow): Patient => ({
   alert: row.alert,
 })
 
+// search_text is recalculated on every create and update, so it always matches
+// the current name.
 const toData = (draft: DraftPatient) => ({
   ...draft,
   birthDate: draft.birthDate ? new Date(draft.birthDate) : null,
+  searchText: normalizeForSearch(`${draft.firstName} ${draft.lastName}`),
 })
 
-// Each word of the search has to match the first name, the last name or the
-// start of the document number, so "ana perez" or "30123" both work.
+// Each word of the search has to match the name or the start of the document
+// number, so "ana perez", "Pérez" and "30123" all work. Names are compared
+// without accents through search_text.
 const searchFilter = (search: string): Prisma.PatientWhereInput => ({
   AND: search
     .trim()
@@ -48,8 +53,7 @@ const searchFilter = (search: string): Prisma.PatientWhereInput => ({
     .filter(Boolean)
     .map((term) => ({
       OR: [
-        { firstName: { contains: term, mode: 'insensitive' } },
-        { lastName: { contains: term, mode: 'insensitive' } },
+        { searchText: { contains: normalizeForSearch(term) } },
         {
           documentNumber: {
             startsWith: term.replace(/\./g, '').toUpperCase(),

@@ -151,7 +151,33 @@ describe('GET /api/patients?search=', () => {
     expect(await search('   ')).toHaveLength(3)
   })
 
-  it.todo('finds "Pérez" when searching "perez", without accents')
+  it('finds "Pérez" when searching "perez", without accents', async () => {
+    await createSearchData()
+
+    expect(await search('perez')).toEqual(['Ana', 'Juan'])
+  })
+
+  it('finds "Núñez" when searching "nunez"', async () => {
+    await createPatient({ firstName: 'Lucía', lastName: 'Núñez' })
+
+    expect(await search('nunez')).toEqual(['Lucía'])
+    expect(await search('LUCIA NUÑEZ')).toEqual(['Lucía'])
+  })
+
+  it('finds a patient by the new name after an update', async () => {
+    const created = await createPatient({ lastName: 'Pérez' })
+
+    await put(created.id, { lastName: 'Martínez' })
+
+    expect(await search('perez')).toEqual([])
+    expect(await search('martinez')).toEqual(['Ana'])
+  })
+
+  it('does not include the search text in the response', async () => {
+    const created = await post()
+
+    expect(created.body).not.toHaveProperty('searchText')
+  })
 })
 
 describe('GET /api/patients/:id', () => {

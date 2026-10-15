@@ -29,6 +29,8 @@ model Patient {
   memberNumber    String?      @map("member_number")
   guardian        String?
   alert           String?
+  // First and last name without accents and in lowercase, used by the search.
+  searchText      String       @map("search_text")
   createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz
 
