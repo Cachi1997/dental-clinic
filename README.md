@@ -1,19 +1,22 @@
 # Dental Clinic
 
+[![CI](https://github.com/Cachi1997/dental-clinic/actions/workflows/ci.yml/badge.svg)](https://github.com/Cachi1997/dental-clinic/actions/workflows/ci.yml)
+
 Management system for a dental clinic: patients, appointments across multiple chairs,
 clinical notes, treatment plans and payments.
 
-> **Status:** in development. The server has a health check and the first database models.
+> **Status:** in development. The API manages insurers and patients; the client is not
+> implemented yet.
 
 ## Tech stack
 
-| Layer    | Tools                                               |
-| -------- | --------------------------------------------------- |
-| Client   | React 19, Vite, TypeScript                          |
-| Server   | Express 5, Prisma 7                                 |
-| Database | PostgreSQL 18                                       |
-| Shared   | Zod schemas used by client and server               |
-| Tooling  | npm workspaces, ESLint, Prettier, Vitest, Supertest |
+| Layer    | Tools                                                               |
+| -------- | ------------------------------------------------------------------- |
+| Client   | React 19, Vite, TypeScript                                          |
+| Server   | Express 5, Prisma 7                                                 |
+| Database | PostgreSQL 18                                                       |
+| Shared   | Zod schemas used by client and server                               |
+| Tooling  | npm workspaces, ESLint, Prettier, Vitest, Supertest, GitHub Actions |
 
 ## Project structure
 
@@ -127,3 +130,9 @@ development data is never touched.
    ```bash
    npm test
    ```
+
+## Continuous integration
+
+GitHub Actions runs on every push: formatting check, lint, typecheck of every
+workspace, client build and the test suite against a PostgreSQL 18 service
+container. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
