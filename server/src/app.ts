@@ -1,11 +1,16 @@
 import express, { type ErrorRequestHandler } from 'express'
 import cors from 'cors'
 import { prisma } from './prisma'
+import { insurersRouter } from './modules/insurers/insurers.routes'
+import { patientsRouter } from './modules/patients/patients.routes'
 
 export const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+app.use('/api/insurers', insurersRouter)
+app.use('/api/patients', patientsRouter)
 
 app.get('/api/health', async (_req, res) => {
   try {
